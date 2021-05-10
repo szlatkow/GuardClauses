@@ -69,7 +69,7 @@ jobs:
         shell: pwsh
         run: |
           $gitNewVersion = if ("${{ steps.tag_generator.outputs.new_version }}") {"${{ steps.tag_generator.outputs.new_version }}"} else {$null}
-          $projectCurrentVersion = ([xml](Get-Content .\src\GuardClauses.csproj)).Project.PropertyGroup.Version
+          $projectCurrentVersion = ([xml](Get-Content .\src\GuardClauses\GuardClauses.csproj)).Project.PropertyGroup.Version
           $projectNewVersion = $gitNewVersion ?? $projectCurrentVersion
           dotnet build .\GuardClauses.sln --configuration Release
 
