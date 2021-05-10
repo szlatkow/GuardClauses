@@ -123,7 +123,7 @@ jobs:
           tag_name: v${{ needs.ci.outputs.latest_version }}
           release_name: GuardClauses v${{ needs.ci.outputs.latest_version }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
 
       - name: Upload GuardClauses package as release asset
         id: upload_package_as_a_release_asset
