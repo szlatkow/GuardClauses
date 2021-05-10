@@ -79,6 +79,13 @@ jobs:
         run: |
           dotnet test .\GuardClauses.sln --verbosity normal
 
+      - if: steps.tag_generator.outputs.new_version != ''
+        name: Upload NuGet package as artifact
+        id: upload_nupkg_artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: GuardClauses v${{ needs.ci.outputs.latest_version }}
+          path: src\GuardClauses\bin\Debug\
   cd:
     if: needs.ci.outputs.is_push_to_default_branch == 'true' && needs.ci.outputs.latest_version != ''
     name: Continuous Deployment
@@ -107,3 +114,23 @@ jobs:
           TAG_COMMIT: true
           TAG_FORMAT: GuardClauses-v*
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+
+      - name: Create and publish release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: v${{ needs.ci.outputs.latest_version }}
+          release_name: GuardClauses v${{ needs.ci.outputs.latest_version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload GuardClauses package as release asset
+        id: upload_package_as_a_release_asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: src\GuardClauses\bin\Debug.${{ needs.ci.outputs.latest_version }}.nupkg
+          asset_name: GuardClauses.${{ needs.ci.outputs.latest_version }}.nupkg
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
