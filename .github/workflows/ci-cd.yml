@@ -86,6 +86,7 @@ jobs:
         with:
           name: GuardClauses v${{ needs.ci.outputs.latest_version }}
           path: src\GuardClauses\bin\Debug\
+          
   cd:
     if: needs.ci.outputs.is_push_to_default_branch == 'true' && needs.ci.outputs.latest_version != ''
     name: Continuous Deployment
