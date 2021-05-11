@@ -71,7 +71,7 @@ jobs:
           $gitNewVersion = if ("${{ steps.tag_generator.outputs.new_version }}") {"${{ steps.tag_generator.outputs.new_version }}"} else {$null}
           $projectCurrentVersion = ([xml](Get-Content .\src\GuardClauses\GuardClauses.csproj)).Project.PropertyGroup.Version
           $projectNewVersion = $gitNewVersion ?? $projectCurrentVersion
-          dotnet build .\GuardClauses.sln --configuration Release
+          dotnet build .\GuardClauses.sln --configuration Release /p:Version=$projectNewVersion
 
       - name: Run Unit Tests
         id: run_unit_tests
