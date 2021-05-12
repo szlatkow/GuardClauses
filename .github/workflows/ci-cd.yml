@@ -83,7 +83,7 @@ jobs:
         id: upload_nupkg_artifact
         uses: actions/upload-artifact@v1
         with:
-          name: GuardClauses v${{ steps.tag_generator.outputs.new_version }}
+          name: GuardClauses
           path: src\GuardClauses\bin\Release\
           
   cd:
@@ -96,8 +96,8 @@ jobs:
         id: dl_packages_artifact
         uses: actions/download-artifact@v2
         with:
-          name: GuardClauses v${{ needs.ci.outputs.latest_version }}
-          path: .\Artifacts
+          name: GuardClauses
+          path: Artifacts/
 
       - name: run ls
         id: run_ls
@@ -133,6 +133,6 @@ jobs:
         with:
           name: GuardClauses v${{ needs.ci.outputs.latest_version }}
           tag_name: v${{ needs.ci.outputs.latest_version }}
-          files: .\GuardClauses\Artifacts\Ardalis.GuardClauses.${{ needs.ci.outputs.latest_version }}.nupkg
+          files: Artifacts/Ardalis.GuardClauses.${{ needs.ci.outputs.latest_version }}.nupkg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
