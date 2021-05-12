@@ -92,6 +92,14 @@ jobs:
     needs: ci
     runs-on: windows-latest
     steps:
+      - name: Download and extract NuGet packages
+        id: dl_packages_artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: GuardClauses v${{ needs.ci.outputs.latest_version }}
+          path: src\GuardClauses\bin\Release\
+    
+
       - name: Setup dotnet
         id: setup_dotnet
         uses: actions/setup-dotnet@v1
