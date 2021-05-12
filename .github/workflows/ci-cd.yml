@@ -86,19 +86,22 @@ jobs:
     needs: ci
     runs-on: windows-latest
     steps:
-      - name: Checkout repository
-        id: checkout_repo
-        uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-
       - name: Download and extract NuGet packages
         id: dl_packages_artifact
         uses: actions/download-artifact@v2
         with:
           name: GuardClauses
           path: Artifacts\
+
+      - name: run ls
+        run: Get-ChildItem -recurse
+        
+      - name: Checkout repository
+        id: checkout_repo
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: run ls
         id: run_ls
