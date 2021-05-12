@@ -4,7 +4,7 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   ci:
-    name: Continuous Integration
+    name: Continuous Integration 
     runs-on: windows-latest
     outputs:
       latest_version: ${{ steps.tag_generator.outputs.new_version }}
