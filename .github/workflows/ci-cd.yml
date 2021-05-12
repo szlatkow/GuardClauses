@@ -84,7 +84,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: GuardClauses v${{ steps.tag_generator.outputs.new_version }}
-          path: src\GuardClauses\bin\Release\Ardalis.GuardClauses.${{ steps.tag_generator.outputs.new_version }}
+          path: src\GuardClauses\bin\Release\Ardalis.GuardClauses.${{ steps.tag_generator.outputs.new_version }}.nupkg
 
   cd:
     if: needs.ci.outputs.is_push_to_default_branch == 'true' && needs.ci.outputs.latest_version != ''
