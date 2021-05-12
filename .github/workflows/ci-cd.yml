@@ -72,18 +72,12 @@ jobs:
           $projectNewVersion = $gitNewVersion ?? $projectCurrentVersion
           dotnet build .\GuardClauses.sln --configuration Release -property:Version=$projectNewVersion
 
-      - name: Run Unit Tests
-        id: run_unit_tests
-        shell: pwsh
-        run: |
-          dotnet test .\GuardClauses.sln --verbosity normal
-
       - if: steps.tag_generator.outputs.new_version != ''
         name: Upload NuGet package as artifact
         id: upload_nupkg_artifact
         uses: actions/upload-artifact@v1
         with:
-          name: GuardClauses v${{ steps.tag_generator.outputs.new_version }}
+          name: GuardClauses
           path: src\GuardClauses\bin\Release\
 
   cd:
@@ -96,14 +90,8 @@ jobs:
         id: dl_packages_artifact
         uses: actions/download-artifact@v2
         with:
-          name: GuardClauses v${{ needs.ci.outputs.latest_version }}
+          name: GuardClauses
           path: src\GuardClauses\bin\Release\
-
-      - name: Setup dotnet
-        id: setup_dotnet
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 3.1.402
 
       - name: Checkout repository
         id: checkout_repo
@@ -118,16 +106,6 @@ jobs:
         with:
           name: GuardClauses v${{ needs.ci.outputs.latest_version }}
           tag_name: v${{ needs.ci.outputs.latest_version }}
-          files: src\GuardClauses\bin\Release\GuardClauses v${{ needs.ci.outputs.latest_version }}\Ardalis.GuardClauses.${{ needs.ci.outputs.latest_version }}.nupkg
+          files: src\GuardClauses\bin\Release\Ardalis.GuardClauses.${{ needs.ci.outputs.latest_version }}.nupkg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish to NuGet
-        id: publish_to_nuget
-        uses: rohith/publish-nuget@v2
-        with:
-          PROJECT_FILE_PATH: src/GuardClauses/GuardClauses.csproj
-          VERSION_REGEX: <Version>(.*)<\/Version>
-          TAG_COMMIT: true
-          TAG_FORMAT: GuardClauses-v*
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
