@@ -133,6 +133,6 @@ jobs:
         with:
           name: GuardClauses v${{ needs.ci.outputs.latest_version }}
           tag_name: v${{ needs.ci.outputs.latest_version }}
-          files: .\Artifacts\Ardalis.GuardClauses.${{ needs.ci.outputs.latest_version }}.nupkg
+          files: GuardClauses\Artifacts\Ardalis.GuardClauses.${{ needs.ci.outputs.latest_version }}.nupkg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
