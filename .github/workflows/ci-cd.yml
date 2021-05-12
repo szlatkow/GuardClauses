@@ -90,7 +90,7 @@ jobs:
     if: needs.ci.outputs.is_push_to_default_branch == 'true' && needs.ci.outputs.latest_version != ''
     name: Continuous Deployment
     needs: ci
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Download and extract NuGet packages
         id: dl_packages_artifact
