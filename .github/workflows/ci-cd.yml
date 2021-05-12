@@ -61,7 +61,7 @@ jobs:
         with: 
           github_token: ${{ secrets.GITHUB_TOKEN }}
           default_bump: false
-          release_branches: ${{ steps.conditionals_handler.outputs.is_push_to_default_branch }}
+          release_branches: ${{ steps.data_gatherer.outputs.default_branch }}
 
       - name: Build solution
         id: build_solution
@@ -85,52 +85,32 @@ jobs:
         with:
           name: GuardClauses v${{ steps.tag_generator.outputs.new_version }}
           path: src\GuardClauses\bin\Release\
+          
+  cd:
+    if: needs.ci.outputs.is_push_to_default_branch == 'true' && needs.ci.outputs.latest_version != ''
+    name: Continuous Deployment
+    needs: ci
+    runs-on: windows-latest
+    steps:
+      - name: Setup dotnet
+        id: setup_dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.402
 
-  # cd:
-  #   if: needs.ci.outputs.is_push_to_default_branch == 'true' && needs.ci.outputs.latest_version != ''
-  #   name: Continuous Deployment
-  #   needs: ci
-  #   runs-on: windows-latest
-  #   steps:
-  #     - name: Setup dotnet
-  #       id: setup_dotnet
-  #       uses: actions/setup-dotnet@v1
-  #       with:
-  #         dotnet-version: 3.1.402
+      - name: Checkout repository
+        id: checkout_repo
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-  #     - name: Checkout repository
-  #       id: checkout_repo
-  #       uses: actions/checkout@v2
-  #       with:
-  #         token: ${{ secrets.GITHUB_TOKEN }}
-  #         fetch-depth: 0
-
-  #     - name: Publish to NuGet
-  #       id: publish_to_nuget
-  #       uses: rohith/publish-nuget@v2
-  #       with:
-  #         PROJECT_FILE_PATH: src/GuardClauses/GuardClauses.csproj
-  #         VERSION_REGEX: <Version>(.*)<\/Version>
-  #         TAG_COMMIT: true
-  #         TAG_FORMAT: GuardClauses-v*
-  #         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-
-  #     - name: Create and publish release
-  #       id: create_release
-  #       uses: actions/create-release@v1
-  #       with:
-  #         tag_name: v${{ needs.ci.outputs.latest_version }}
-  #         release_name: GuardClauses v${{ needs.ci.outputs.latest_version }}
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  #     - name: Upload GuardClauses package as release asset
-  #       id: upload_package_as_a_release_asset
-  #       uses: actions/upload-release-asset@v1
-  #       with:
-  #         upload_url: ${{ steps.create_release.outputs.upload_url }}
-  #         asset_path: src\GuardClauses\bin\Debug.${{ needs.ci.outputs.latest_version }}.nupkg
-  #         asset_name: GuardClauses.${{ needs.ci.outputs.latest_version }}.nupkg
-  #         asset_content_type: application/zip
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to NuGet
+        id: publish_to_nuget
+        uses: rohith/publish-nuget@v2
+        with:
+          PROJECT_FILE_PATH: src/GuardClauses/GuardClauses.csproj
+          VERSION_REGEX: <Version>(.*)<\/Version>
+          TAG_COMMIT: true
+          TAG_FORMAT: GuardClauses-v*
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
