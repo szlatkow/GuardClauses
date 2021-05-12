@@ -86,13 +86,6 @@ jobs:
     needs: ci
     runs-on: windows-latest
     steps:
-      - name: Download and extract NuGet packages
-        id: dl_packages_artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: GuardClauses
-          path: src\GuardClauses\bin\Release\
-
       - name: Checkout repository
         id: checkout_repo
         uses: actions/checkout@v2
@@ -100,12 +93,23 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
+      - name: Download and extract NuGet packages
+        id: dl_packages_artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: GuardClauses
+          path: Artifacts\
+
+      - name: run ls
+        id: run_ls
+        run: Get-ChildItem -recurse
+
       - name: Create and publish release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
           name: GuardClauses v${{ needs.ci.outputs.latest_version }}
           tag_name: v${{ needs.ci.outputs.latest_version }}
-          files: src\GuardClauses\bin\Release\GuardClauses\Ardalis.GuardClauses.${{ needs.ci.outputs.latest_version }}.nupkg
+          files: Artifacts\Ardalis.GuardClauses.${{ needs.ci.outputs.latest_version }}.nupkg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
