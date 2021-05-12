@@ -98,7 +98,11 @@ jobs:
         with:
           name: GuardClauses v${{ needs.ci.outputs.latest_version }}
           path: .\Artifacts
-    
+
+      - name: run ls
+        id: run ls
+        run: |
+          ls -R
 
       - name: Setup dotnet
         id: setup_dotnet
