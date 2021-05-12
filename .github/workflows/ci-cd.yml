@@ -84,5 +84,5 @@ jobs:
         id: upload_nupkg_artifact
         uses: actions/upload-artifact@v1
         with:
-          name: GuardClauses.zip
+          name: GuardClauses.${{ steps.tag_generator.outputs.new_version }}
           path: src\GuardClauses\bin\Release\
