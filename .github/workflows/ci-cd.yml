@@ -87,7 +87,7 @@ jobs:
           path: src\GuardClauses\bin\Release\
 
   cd:
-    if: needs.ci.steps.data_gatherer.outputs.default_branch == 'true' && needs.ci.outputs.latest_version != ''
+    if: needs.ci.outputs.latest_version != ''
     name: Continuous Deployment
     needs: ci
     runs-on: windows-latest
