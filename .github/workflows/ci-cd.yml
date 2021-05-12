@@ -92,4 +92,4 @@ jobs:
         with:
           name: GuardClauses v${{ steps.tag_generator.outputs.new_version }}
           tag_name: v${{ steps.tag_generator.outputs.new_version }}
-          files: src\GuardClauses\bin\Release\Ardalis.GuardClauses.${{ needs.ci.outputs.latest_version }}.nupkg
+          files: src\GuardClauses\bin\Release\Ardalis.GuardClauses.${{ steps.tag_generator.outputs.new_version }}.nupkg
