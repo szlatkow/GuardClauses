@@ -100,7 +100,7 @@ jobs:
           path: .\Artifacts
 
       - name: run ls
-        id: run ls
+        id: run_ls
         run: |
           ls -R
 
