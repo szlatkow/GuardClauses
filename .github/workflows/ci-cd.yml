@@ -83,9 +83,9 @@ jobs:
         id: upload_nupkg_artifact
         uses: actions/upload-artifact@v1
         with:
-          name: GuardClauses
-          path: src\GuardClauses\bin\Release\
-          
+          name: GuardClauses v${{ steps.tag_generator.outputs.new_version }}
+          path: src\GuardClauses\bin\Release\Ardalis.GuardClauses.${{ steps.tag_generator.outputs.new_version }}
+
   cd:
     if: needs.ci.outputs.is_push_to_default_branch == 'true' && needs.ci.outputs.latest_version != ''
     name: Continuous Deployment
@@ -96,13 +96,8 @@ jobs:
         id: dl_packages_artifact
         uses: actions/download-artifact@v2
         with:
-          name: GuardClauses
-          path: Artifacts/
-
-      - name: run ls
-        id: run_ls
-        run: |
-          ls -R
+          name: GuardClauses v${{ needs.ci.outputs.latest_version }}
+          path: src\GuardClauses\bin\Release\Ardalis.GuardClauses.${{ needs.ci.outputs.latest_version }}.nupkg
 
       - name: Setup dotnet
         id: setup_dotnet
@@ -127,12 +122,17 @@ jobs:
           TAG_FORMAT: GuardClauses-v*
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
 
+      - name: run ls
+        id: run_ls
+        run: |
+          ls -R
+
       - name: Create and publish release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
           name: GuardClauses v${{ needs.ci.outputs.latest_version }}
           tag_name: v${{ needs.ci.outputs.latest_version }}
-          files: Artifacts/Ardalis.GuardClauses.${{ needs.ci.outputs.latest_version }}.nupkg
+          files: src\GuardClauses\bin\Release\Ardalis.GuardClauses.${{ needs.ci.outputs.latest_version }}.nupkg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
