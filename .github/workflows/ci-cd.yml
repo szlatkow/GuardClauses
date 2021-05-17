@@ -7,6 +7,7 @@ jobs:
     name: Continuous Integration
     runs-on: windows-latest
     outputs:
+      is_change_in_project_source: ${{ steps.filter_changes.outputs.guardclauses }}
       latest_version: ${{ steps.tag_generator.outputs.new_version }}
       is_push_to_default_branch: ${{ steps.conditionals_handler.outputs.is_push_to_default_branch }}
     steps:
@@ -54,7 +55,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - if: steps.conditionals_handler.outputs.is_push_to_default_branch == 'true'
+      - name: Filter changes
+        id: filter_changes
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            guardclauses:
+              - 'src/GuardClauses/**'
+
+      - if: steps.conditionals_handler.outputs.is_push_to_default_branch == 'true' && steps.filter_changes.outputs.guardclauses
         name: Bump GH tag
         id: tag_generator
         uses: mathieudutour/github-tag-action@v5.4
@@ -87,7 +96,7 @@ jobs:
           path: src\GuardClauses\bin\Release\
 
   cd:
-    if: needs.ci.outputs.latest_version != ''
+    if: needs.ci.outputs.latest_version != '' && needs.ci.outputs.is_change_in_project_source
     name: Continuous Deployment
     needs: ci
     runs-on: windows-latest
@@ -112,16 +121,7 @@ jobs:
           name: GuardClauses v${{ needs.ci.outputs.latest_version }}
           path: Artifacts\
 
-      - name: Filter changes
-        id: filter_changes
-        uses: dorny/paths-filter@v2
-        with:
-          filters: |
-            guardclauses:
-              - 'src/GuardClauses/**'
-
-      - if: steps.filter_changes.outputs.guardclauses == 'true'
-        name: Publish to NuGet
+      - name: Publish to NuGet
         id: publish_to_nuget
         uses: rohith/publish-nuget@v2
         with:
@@ -131,8 +131,7 @@ jobs:
           TAG_FORMAT: GuardClauses-v*
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
 
-      - if: steps.filter_changes.outputs.guardclauses == 'true'
-        name: Create and publish release
+      - name: Create and publish release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
