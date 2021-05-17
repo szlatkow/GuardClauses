@@ -5,7 +5,7 @@
     <PackageId>Ardalis.GuardClauses</PackageId>
     <Title>Ardalis.GuardClauses</Title>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Steve Smith (@ardalis)</Authors>
+    <Authors>Steve Smith (@ardalis)</Authors> 
     <Company>Ardalis.com</Company>
     <PackageProjectUrl>https://github.com/ardalis/guardclauses</PackageProjectUrl> 
     <Description>A simple package with guard clause helper methods. See docs for how to extend using your own extension methods.</Description>
