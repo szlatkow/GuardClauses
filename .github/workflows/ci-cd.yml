@@ -76,7 +76,7 @@ jobs:
         id: run_unit_tests
         shell: pwsh
         run: |
-          dotnet test .\GuardClauses.sln --no-build --verbosity normal
+          dotnet test .\GuardClauses.sln --no-restore --verbosity normal
 
       - if: steps.tag_generator.outputs.new_version != ''
         name: Upload artifacts
