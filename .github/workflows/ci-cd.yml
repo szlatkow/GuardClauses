@@ -7,9 +7,7 @@ jobs:
     name: Continuous Integration
     runs-on: windows-latest
     outputs:
-      is_change_in_project_source: ${{ steps.filter_changes.outputs.guardclauses }}
       latest_version: ${{ steps.tag_generator.outputs.new_version }}
-      is_push_to_default_branch: ${{ steps.conditionals_handler.outputs.is_push_to_default_branch }}
     steps:
       - name: Data gatherer
         id: data_gatherer
@@ -60,10 +58,10 @@ jobs:
         uses: dorny/paths-filter@v2
         with:
           filters: |
-            guardclauses:
+            is_change_in_project_source:
               - 'src/GuardClauses/**'
 
-      - if: steps.conditionals_handler.outputs.is_push_to_default_branch == 'true' && steps.filter_changes.outputs.guardclauses == 'true'
+      - if: steps.conditionals_handler.outputs.is_push_to_default_branch == 'true' && steps.filter_changes.outputs.is_change_in_project_source == 'true'
         name: Bump GH tag
         id: tag_generator
         uses: mathieudutour/github-tag-action@v5.4
@@ -96,7 +94,7 @@ jobs:
           path: src\GuardClauses\bin\Release\
 
   cd:
-    if: needs.ci.outputs.latest_version != '' && needs.ci.outputs.is_change_in_project_source == 'true'
+    if: needs.ci.outputs.latest_version != ''
     name: Continuous Deployment
     needs: ci
     runs-on: windows-latest
